@@ -300,18 +300,19 @@ In conclusion song characteristics do not determine if a song is a hit but may i
 
 A promising area for future research in this field is to explore how musical characteristics affect a song’s emotional appeal. This investigation focused primarily on commercial success rather than the emotional dimensions of music. It would be interesting to examine which specific characteristics elicit certain emotional responses in listeners. Understanding these relationships could reveal how music not only achieves popularity but also creates emotional resonance, deepening our understanding of why some songs connect more profoundly with audiences.
 
+
 ## References {.underline}
 
-“Learning R.” CDSC R Workshop, nyu-cdsc.github.io/learningr/.
+“Learning R.” CDSC R Workshop, <https://nyu-cdsc.github.io/learningr>\
 
-“Maximizing Impact of Artists Collaborations on Spotify Recommender Algorithms [Case Study, 2024]: Music Tomorrow Blog.”, www.music-tomorrow.com/blog/case-study-maximizing-impact-of-artists-collaborations-on-spotify-recommender-algorithms.
+“Maximizing Impact of Artists Collaborations on Spotify Recommender Algorithms [Case Study, 2024]: Music Tomorrow Blog.”, <https://www.music-tomorrow.com/blog/case-study-maximizing-impact-of-artists-collaborations-on-spotify-recommender-algorithms>
 
-Oliveira, Gabriel P., et al. “MGD: Music Genre Dataset.” Zenodo, Zenodo, 28 May 2021, zenodo.org/records/4778563.
+Oliveira, Gabriel P., et al. “MGD: Music Genre Dataset.” Zenodo, Zenodo, 28 May 2021, <https://zenodo.org/records/4778563>
 
-Parris, Daniel. “The Rise of Explicit Music: A Statistical Analysis.” The Rise of Explicit Music: A Statistical Analysis., Stat Significant, 29 June 2023, www.statsignificant.com/p/the-rise-of-explicit-music-a-statistical.
+Parris, Daniel. “The Rise of Explicit Music: A Statistical Analysis.” The Rise of Explicit Music: A Statistical Analysis., Stat Significant, 29 June 2023, <https://www.statsignificant.com/p/the-rise-of-explicit-music-a-statistical>
 
-Qiu, Yixuan. “Showtext: Using Fonts More Easily in R Graphs.” Showtext: Using Fonts More Easily in R Graphs, 2 Mar. 2024, cran.rstudio.com/web/packages/showtext/vignettes/introduction.html.
+Qiu, Yixuan. “Showtext: Using Fonts More Easily in R Graphs.” Showtext: Using Fonts More Easily in R Graphs, 2 Mar. 2024, <https://cran.rstudio.com/web/packages/showtext/vignettes/introduction.html>
 
-Rosenborg, Rutger Ansley, and Rufy Ghazi. “Why Music Data Analytics Tools Are an Artist’s Best Friend.” How Music Charts, How Music Charts, 31 Oct. 2023, hmc.chartmetric.com/music-data-analytics-artists/.
+Rosenborg, Rutger Ansley, and Rufy Ghazi. “Why Music Data Analytics Tools Are an Artist’s Best Friend.” How Music Charts, How Music Charts, 31 Oct. 2023, <https://hmc.chartmetric.com/music-data-analytics-artists/>
 
-“Inserting Picture/Table in R Markdown.” Stack Overflow, 31 Oct. 2016, stackoverflow.com/questions/25166624/insert-picture-table-in-r-markdown.
+“Inserting Picture/Table in R Markdown.” Stack Overflow, 31 Oct. 2016, <https://stackoverflow.com/questions/25166624/insert-picture-table-in-r-markdown>
