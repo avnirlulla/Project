@@ -11,6 +11,10 @@ date: "2025-10-07"
 knitr::opts_chunk$set(echo = FALSE)
 spotify_hits_dataset_complete <- read.delim("~/Desktop/SDS313/spotify_hits_dataset_complete.csv")
 library(tidyverse)
+
+#as my dataset was very large and unformatted, off the internet I need to input the dataset directly into the environemnt
+#using the gridded icon with an arrow, I imported my dataset directly into the global environment
+#having the dataset diectly into the environment, I needed to use read.delim rather than just read
 ```
 
 ```{r}
@@ -20,6 +24,7 @@ dateparse
 
 dateparse[2] - dateparse[1]
 
+#I parsed the dates to undestand the relevancy of the dataset, how long had passed between the dataset being published and now
 ```
 
 ## Introduction {.underline}
@@ -50,15 +55,20 @@ One of the primary challenges I faced during data preparation was filtering the 
 
 ```{r}
 
+#hit_tib formats the full spotify dataset as a tibble
 hits_tib <- as_tibble(spotify_hits_dataset_complete)
 hits_tib
 
+#I first translated all song duration times from milliseconds to seonds by dividing by 1000
 spotify_hits_dataset_complete$duration_ms <- spotify_hits_dataset_complete$duration_ms/1000
 
+#I only needed certain variables in my filtered dataset, my tibble: artist name, popularity, explcit, song type, track number, number of artists, number of available markets, duration, key, time signature, valence, and tempo
+#I used "select()" to filter my dataset
 musicHits <- select(hits_tib, song_name:artist_name:popularity:explicit:song_type:track_number:num_artists:num_available_markets:duration_ms:key:time_signature:valence:tempo)
 
 musicHits
 
+#my table was made manually with "|" separating each column
 
 ```
 
@@ -93,7 +103,10 @@ musicHits
 ```{r}
 #Distribution of explicit songs
 
+#I used a ba graph, coded in r, to represent the distribution of explicit songs
 barplot(table(musicHits$explicit), family = "Times New Roman", main = "Distribution of Explicit Songs", xlab = "Explicit Nature", ylab = "Count", ylim = c(0, 8000), col = "#fec44f")
+
+#The statistics I gathered on the distribution of explicit songs included sum (of both explicit and nonexplicit songs), total songs, and the percentage of which was explicit on not explicit
 
 explicit <- sum(musicHits$explicit=='True', na.rm = FALSE)
 explicit
@@ -113,8 +126,11 @@ The distribution of explicit and non-explicit songs in the Spotify Hits dataset 
 
 ```{r}
 #Distribution of song types
+
+#I used a ba graph to visualize the distribution of song types, coded in r
 barplot(table(musicHits$song_type), main = "Distribution of Song Types", xlab = "Song Type", ylab = "Count", ylim = c(0, 9000), col = "#fec44f", family = "Times New Roman")
 
+#I found the total among of songs that were solo and collaborations, and then found the percentages of the dataset that were each 
 solo <- sum(musicHits$song_type=='Solo', na.rm = FALSE)
 solo
 collab <- sum(musicHits$song_type=='Collaboration', na.rm = FALSE)
@@ -133,8 +149,11 @@ The distribution of solo and collaborative songs in the Spotify Hits dataset is 
 
 ```{r}
 #Distribution of duration
+
+#I used a histogram, coded in r, to demonstrate the distribution of song duration
 hist(musicHits$duration_ms, main = "Distribution of Song Duration", xlab = "Duration", ylab = "Count", col = "#fec44f", family = "Times New Roman")
 
+#I used mean, median, standard deviation, IQR, min/max, and quartiles to describe my dataset with statistics
 mean(musicHits$duration_ms,na.rm=TRUE)
 
 median(musicHits$duration_ms,na.rm=TRUE)
@@ -155,8 +174,12 @@ The distribution of song duration in the Spotify Hits dataset is right-skewed, o
 
 ```{r}
 #Distribution of tempo
+
+#I used a histogram, coded in r, to demonstrate the distribution of song tempos
+
 hist(musicHits$tempo, main = "Distribution of Song Tempos", xlab = "Duration", ylab = "Count", col = "#fec44f", family = "Times New Roman")
 
+#I used mean, median, standard deviation, IQR, min/max, and quartiles to describe my dataset with statistics
 mean(musicHits$tempo,na.rm=TRUE)
 
 median(musicHits$tempo,na.rm=TRUE)
@@ -181,10 +204,14 @@ The distribution of song tempos in the Spotify Hits dataset is slightly right-sk
 ```{r}
 
 #Explicit songs vs popularity
+
+#I used a boxplot to describe Explicit Nature vs Popularity
 boxplot(popularity ~ explicit, data = musicHits, col = "#fec44f", pch = 20, main = "Explicit Nature vs Popularity", xlab = "Explicit Nature (True/False)", ylab = "Popularity", family = "Times New Roman")
 
+#a tibble was necessary to categorize hits and explicit nature
 hits_Explicit <- group_by(hits_tib, explicit)
 hits_Explicit
+
 
 popMeanEx <- summarize(hits_Explicit, meanPopEx = mean(popularity, na.rm = TRUE))
 popMeanEx
