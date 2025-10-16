@@ -1,0 +1,290 @@
+---
+title: "MusicProject1"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+date: "2025-10-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+spotify_hits_dataset_complete <- read.delim("~/Desktop/SDS313/spotify_hits_dataset_complete.csv")
+library(tidyverse)
+```
+
+```{r}
+datestring <- c("2020-10-11", as.character(today()))
+dateparse <- as.Date(datestring)
+dateparse
+
+dateparse[2] - dateparse[1]
+
+```
+
+## Introduction {.underline}
+
+This project investigates information about hit songs and their artists, including all collaborating performers and their respective genres. The goal of the dataset is to provide insight into the defining characteristics of hit songs—such as language, danceability, key, and other musical attributes. I chose this topic to combine my passion for music with my academic interest in data science. Through this project, I hope to gain exposure to music data analytics and explore its potential as a future career path. A link to the dataset's website can be found [here](https://zenodo.org/records/4778563)
+
+The individual sampling units in this study are songs. Each observation represents a unique song, organized as a single row in the dataset. These songs are analyzed for measurable characteristics such as artist, explicitness, type, duration, tempo, key, and popularity. My study focuses on the songs themselves—rather than on the artists or listeners—examining quantifiable musical features. The population of interest includes hit songs released between January 2017 and December 2019.
+
+The dataset was obtained from Zenoob’s Music Information Retrieval collection and was originally compiled using data from Spotify. The Music Genre Dataset includes weekly charts of the 200 most-streamed songs across various countries and territories, as well as a global aggregate chart. For this project, I am focusing specifically on hit songs appearing in these charts. The data was collected between 2017 and 2019 and published in 2020. With a time difference of `r dateparse[2] - dateparse[1]` days the dataset is an accurate representation of modern music markets. The dataset is considered reputable and reliable, having been created for a paper presented at the International Society for Music Information Retrieval (ISMIR) Conference (2020).
+
+[I intend to explore the following research questions in my investigation:]{style="color: orange; font-size: 15px;"}
+
+1.  How do song characteristics influence popularity among Spotify’s top hits?
+2.  How do artistic approaches reflect broader trends in modern popular music?
+3.  What relationships exist between musical structure and success?
+
+![Music Analytics](https://cdn.getmidnight.com/b5a0b552ae89a91aa34705031852bd16/size/w600/2022/10/1_1---2022-10-03T100435.657.png)
+
+## Data Preparation {.underline}
+
+The dataset was originally provided as a CSV file containing a large number of variables, many of which were unnecessary for my analysis. Instead of merging multiple datasets, I chose to refine this one by narrowing it down to the most relevant variables: artist, explicitness, type, duration, tempo, key, and popularity.
+
+To handle missing data, I used the na.rm operation to ignore NA values during calculations and summaries. I also recoded certain variables to make the data more interpretable. Namely, the duration variable was originally measured in milliseconds, so I converted it to seconds to create manageable and readbable data I did not need to parse any strings or dates, as the dataset was already structured appropriately for these fields.
+
+One of the primary challenges I faced during data preparation was filtering the dataset to only include the variables I needed. Several variables were interlinked—removing one would sometimes affect the integrity of another—making it difficult to isolate them cleanly. Despite this, I proceeded by focusing on the relevant columns and disregarding the rest in my analysis. Although the dataset remained larger than intended, this approach ensured that no essential information was lost while keeping the project manageable.
+
+## Variable Descriptions {.underline}
+
+```{r}
+
+hits_tib <- as_tibble(spotify_hits_dataset_complete)
+hits_tib
+
+spotify_hits_dataset_complete$duration_ms <- spotify_hits_dataset_complete$duration_ms/1000
+
+musicHits <- select(hits_tib, song_name:artist_name:popularity:explicit:song_type:track_number:num_artists:num_available_markets:duration_ms:key:time_signature:valence:tempo)
+
+musicHits
+
+
+```
+
+| Variable | Description |
+|--------------------------|----------------------------------------------|
+| song_name | Name of the Spotify hit song (Categorical Variable) |
+| artist_id | Unique identifier of the Artist (Numerical Variable) |
+| artist_name | Name of the hit song's Artist (Categorical Variable) |
+| popularity | Song popularity on Spotify (Numerical Variable) |
+| explicit | Whether or not the track has explicit lyrics (true/false) (Categorical Variable) |
+| song_type | Whether the song has a solo artist or a collaboration (Categorical Variable) |
+| track_number | Track number of the song (Numerical Variable) |
+| num_artists | Number of artists performing the song (Numerical Variable) |
+| num_available_markets | Number of countries in which the song may be played (Numerical Variable) |
+| release_date | Date the song was released (Numerical Variable) |
+| duration_ms | Duration of the song, in seconds in the cleaned dataset (Numerical Variable) |
+| key | The estimated overall key of a song, mapped as an integer number (Numerical Variable) |
+| mode | The general modality of a song (Numerical Variable) |
+| time_signature | The amount of beats in each bar or measure (Numerical Variable) |
+| acousticness | Informs the probability of a song to be acoustic or not (Numerical Variable) |
+| danceability | Combines tempo, rhythm and other elements to inform if a song is suitable for dancing (Numerical Variable) |
+| energy | Represents the intensity and activity of a song by combining information such as dynamic range, perceived loudness, timbre, onset rate, and general entropy (Numerical Variable) |
+| instrumentalness | Measures the probability of a song to be instrumental, that is, not contain vocals. (Numerical Variable) |
+| liveness | Detects the presence of an audience in a song. The higher the liveness value, the higher the probability of a song being performed live (Numerical Variable) |
+| loudness | The general loudness measured in decibels (Numerical Variable) |
+| speechiness | Measures the probability of a given song to have spoken words in it (Numerical Variable) |
+| valence | Describes the positiveness within a song. High valence values represent happier songs, whereas low values characterize the opposite (Numerical Variable) |
+| tempo | The speed of the song, measured in beats per minute, BPM (Numerical Variable) |
+
+## Univariate Analyses {.underline}
+
+```{r}
+#Distribution of explicit songs
+
+barplot(table(musicHits$explicit), family = "Times New Roman", main = "Distribution of Explicit Songs", xlab = "Explicit Nature", ylab = "Count", ylim = c(0, 8000), col = "#fec44f")
+
+explicit <- sum(musicHits$explicit=='True', na.rm = FALSE)
+explicit
+notExplicit <- sum(musicHits$explicit=='False', na.rm = FALSE)
+notExplicit
+
+total <- explicit + notExplicit
+total
+
+percExplicit <- (explicit/ total) *100
+percExplicit
+percNotExplicit <- (notExplicit/ total) *100
+percNotExplicit
+```
+
+The distribution of explicit and non-explicit songs in the Spotify Hits dataset is shown here. There are 7040 non-explicit songs compared to 6840 explicit songs, demonstrating that non-explicit tracks represent a slight majority, approximately 50.72%, among musical hits. Thereby, non explicit songs are more frequently hits than that of an explicit nature.
+
+```{r}
+#Distribution of song types
+barplot(table(musicHits$song_type), main = "Distribution of Song Types", xlab = "Song Type", ylab = "Count", ylim = c(0, 9000), col = "#fec44f", family = "Times New Roman")
+
+solo <- sum(musicHits$song_type=='Solo', na.rm = FALSE)
+solo
+collab <- sum(musicHits$song_type=='Collaboration', na.rm = FALSE)
+collab
+
+total2 <- solo + collab
+total2
+
+percSolo <- (solo/ total2) *100
+percSolo
+percCollab <- (collab/ total2) *100
+percCollab
+```
+
+The distribution of solo and collaborative songs in the Spotify Hits dataset is shown here. There are 8893 solo tracks compared to 4987 collaborative tracks, indicating that solo artist pieces are more common, representing approximately 64.07% of all musical hits. Thereby, hit songs more commonly are ceated by solo artists.
+
+```{r}
+#Distribution of duration
+hist(musicHits$duration_ms, main = "Distribution of Song Duration", xlab = "Duration", ylab = "Count", col = "#fec44f", family = "Times New Roman")
+
+mean(musicHits$duration_ms,na.rm=TRUE)
+
+median(musicHits$duration_ms,na.rm=TRUE)
+
+sd(musicHits$duration_ms,na.rm=TRUE)
+
+IQR(musicHits$duration_ms,na.rm=TRUE)
+
+min (musicHits$duration_ms,na.rm=TRUE)
+
+max(musicHits$duration_ms,na.rm=TRUE)
+
+quantile(musicHits$duration_ms, probs = c(0.25, 0.5, 0.75))
+
+```
+
+The distribution of song duration in the Spotify Hits dataset is right-skewed, or positively skewed, with most songs lasting between 100 and 300 seconds. A small number of outliers extend beyond 400 seconds, representing longer tracks. The average duration of a song among Spotify’s top hits is 207.22 seconds, while the median duration is 201.26 seconds. Since the median is slightly lower than the mean, this affirms the positive skew of the distribution. As the median is closer to Q1, the upper is longer and the IQR shows a larger spread exists above the mean. The standard deviation of song duration is 50.11 seconds, demonstrating a moderate spread of song lengths around the average.
+
+```{r}
+#Distribution of tempo
+hist(musicHits$tempo, main = "Distribution of Song Tempos", xlab = "Duration", ylab = "Count", col = "#fec44f", family = "Times New Roman")
+
+mean(musicHits$tempo,na.rm=TRUE)
+
+median(musicHits$tempo,na.rm=TRUE)
+
+sd(musicHits$tempo,na.rm=TRUE)
+
+IQR(musicHits$tempo,na.rm=TRUE)
+
+min (musicHits$tempo,na.rm=TRUE)
+
+max(musicHits$tempo,na.rm=TRUE)
+
+quantile(musicHits$tempo, probs = c(0.25, 0.5, 0.75))
+
+```
+
+
+The distribution of song tempos in the Spotify Hits dataset is slightly right-skewed (positively skewed), with most songs falling between 80 and 160 BPM. A small number of outliers extend beyond 200 BPM, representing unusually fast-paced tracks. The average tempo of a song among Spotify’s top hits is 122.37 BPM, while the median tempo is 121.94 BPM. Since the median is slightly lower than the mean, this supports the conclusion that the distribution is positively skewed. As the median is closer to Q3, the lower is longer and the IQR shows a larger spread exists below the mean. The standard deviation of song tempo is 28.12 BPM, indicating a moderate spread of tempos around the average.
+
+## Bivariate Analyses {.underline}
+
+```{r}
+
+#Explicit songs vs popularity
+boxplot(popularity ~ explicit, data = musicHits, col = "#fec44f", pch = 20, main = "Explicit Nature vs Popularity", xlab = "Explicit Nature (True/False)", ylab = "Popularity", family = "Times New Roman")
+
+hits_Explicit <- group_by(hits_tib, explicit)
+hits_Explicit
+
+popMeanEx <- summarize(hits_Explicit, meanPopEx = mean(popularity, na.rm = TRUE))
+popMeanEx
+popMedianEx <- summarize(hits_Explicit, medianPopEx = median(popularity, na.rm = TRUE))
+popMedianEx
+popMinEx <- summarize(hits_Explicit, minPopEx = min(popularity, na.rm = TRUE))
+popMinEx
+popMaxEx <- summarize(hits_Explicit, maxPopEx = max(popularity, na.rm = TRUE))
+popMaxEx
+popIQREx <- summarize(hits_Explicit, iqrPopEx = IQR(popularity, na.rm = TRUE))
+popIQREx
+
+```
+
+A bivariate boxplot visualizes the relationship between a categorical variable. I have investigated the relationship between a categorical, explicit nature of song and its numeric, popularity score. This visualization enables analysis of how popularity varies across explicit and non-explicit categories.
+
+The boxplot shows that songs categorized as explicit generally have slightly lower popularity scores than non-explicit songs. The distribution of popularity is also more spread out among non-explicit tracks, suggesting greater variation in audience response. The average popularity of explicit songs is approximately 44, compared to 46 for non-explicit songs, while their median scores are 50 and 53, respectively. These statistics reinforce the visual pattern observed in the plot and suggest that non-explicit songs tend to be slightly more popular overall, although both groups display substantial overlap in popularity.
+
+```{r}
+#Duration vs tempo
+plot(musicHits$duration_ms, musicHits$tempo, main = "Duration vs Tempo", xlab = "Duration", ylab = "Tempo (BPM)", col = "#fec44f", pch = 20, family = "Times New Roman")
+
+cor(musicHits$duration_ms, musicHits$tempo)
+
+```
+
+I investigated whether the tempo of a song is related to its duration. The analysis showed that while song durations exhibit a wide range of values, tempos are more evenly distributed across tracks. Visually, this suggests a weak relationship between the two variables. The Pearson correlation coefficient, calculated at approximately –0.04, confirms that there is a very weak negative correlation between a song’s tempo and its duration. This indicates that faster or slower tempos have little to no consistent association with how long a song lasts.
+
+```{r}
+#Number of artists vs song type vs popularity 
+boxplot(popularity ~ song_type, data = musicHits, col = "#fec44f", pch = 20, main = "Song Type vs Popularity", xlab = "Song Type (Solo / Collaboation)", ylab = "Popularity", family = "Times New Roman")
+
+
+hits_byType <- group_by(hits_tib, song_type)
+hits_byType
+
+popMean <- summarize(hits_byType, meanPop = mean(popularity, na.rm = TRUE))
+popMean
+popMedian <- summarize(hits_byType, medianPop = median(popularity, na.rm = TRUE))
+popMedian
+popMin <- summarize(hits_byType, minPop = min(popularity, na.rm = TRUE))
+popMin
+popMax <- summarize(hits_byType, maxPop = max(popularity, na.rm = TRUE))
+popMax
+popIQR <- summarize(hits_byType, iqrPop = IQR(popularity, na.rm = TRUE))
+popIQR
+
+
+```
+
+The boxplot shows that songs released by solo artists generally have slightly lower popularity scores than songs created through collaboration. In the univariate analysis of song types, solo artist tracks were found to be more frequent within the dataset of hit songs. The average popularity of solo artist songs is approximately 44, compared to 47 for collaborative songs, while their median scores are 50 and 53, respectively. These statistics demonstrate that although solo artist tracks make up the majority of hit songs, collaborative music tends to achieve higher popularity among those hits. This suggests that some relationship between artists may enhance a song’s reach or appeal.
+
+```{r}
+#Number of artists vs available markets
+plot(musicHits$num_artists, musicHits$num_available_markets, main = "Number of Artists vs Available Markets", xlab = "Number of Artists/ Collaborators", ylab = "Available Markets", col = "#fec44f", pch = 20, family = "Times New Roman")
+
+cor(musicHits$num_artists, musicHits$num_available_markets)
+
+```
+
+I investigated whether the number of artists or collaborators on a song is related to the number of markets in which the track is available. I suspected that songs featuring more artists might reach a wider audience and therefore be distributed across more markets. Visually, the plot shows that while there are fewer hit songs created by larger groups of collaborators, market availability remains relatively consistent across all categories. This suggests a weak relationship between the two variables. The Pearson correlation coefficient, calculated at approximately 0.04, confirms this weak association, indicating that the number of artists contributing to a song has little to no influence on how widely it is distributed across markets.
+
+## Choice Elements {.underline}
+
+I have used 5 or more in-line codes within your report specifically to reference averages in my concluding thoughts and certain formatting throughout the report. I have additionally included working hyperlinks within your report that further explain my variables and analysis in my conclusion. These references reveal my thought process and learning throughout this project. I have change the default font style and color of the text in part of your report to highlight some important parts including headers and my research questions. I have parsed date/time to provide context on the modern relevance of the dataset in my introduction. Additionally, I have included a floating table of contents to allow easy navigation of my report, oganized by each section.
+
+## Conclusion {.underline}
+
+I was motivated to investigate the musical characteristics of hit songs to better understand the elements that contribute to success in the music industry. Going into this investigation, I had several hypotheses I was eager to evaluate—particularly regarding the relationships between artists, song structure, and the explicit nature of music in relation to song popularity. The datset, made up of `r total` songs, demonstrated a range of data I could analyze and learn from.
+
+Explicit music is frequently found on mainstream platforms and social media, which led me to hypothesize that explicit tracks would appear frequently in a dataset of Spotify’s top hits. I believed such songs might achieve greater visibility with reach among audiences. During my preliminary research, I found supporting evidence for this indicating that "explicit music scores higher on danceability," while "effectively portray[ing] life in an underprivileged part of the United States" which potentially contributes to their appeal and presence among popular tracks. One such supporting opinion may be found [here](https://www.statsignificant.com/p/the-rise-of-explicit-music-a-statistical). Explicit music's "rapid rise can be attributed to ... liberalized attitudes toward obscene language," contributing to a polarized reaction.
+
+My investigation, however, did not affirm my initial hypothesis. Instead, it revealed evidence of a divided audience: while some listeners are drawn to the liberal and representative nature of explicit music, others are deterred by its controversial themes. Spotify hits are evely split between explicit and non explicit music -- approximately `r round((explicit/ total) *100,2)`% and `r round((notExplicit/ total) *100,2)`% respectively. Ultimately, my dataset showed that although explicit and non-explicit tracks were nearly balanced, non-explicit music was slightly more prevalent among Spotify’s top hits.
+
+Similarly, I suspected that songs created by more artists would reach wider audiences and be more relevant in available markets and overall popularity. Social media, a popular tool in expanding a musical audience, promotes music with multiple artist and collaborations. Thereby, with more artists producing a single, a larger audience could be reached. In music marketing this has been coined a "crossover effect" where a song expands its appeal beyond its primary audiences through collaborations. One such supporting opinion may be found [here](https://www.music-tomorrow.com/blog/case-study-maximizing-impact-of-artists-collaborations-on-spotify-recommender-algorithms) for insights on collaborations as "gateways to new creative realms."
+
+My investigation grew upon my initial hypothesis. Although solo artist tracks make up the majority of hit songs, collaborative music tends to achieve higher popularity among those hits. Spotify's hits were split between `r round((solo/ total2) *100,2)`% solo artists and `r round((collab/ total2) *100,2)`% artists in collaboration. Nonethless, songs created in collaboration have higher population scores despite their minority. Thereby, the "crossover effect" theory is affirmed as collaborative music is more successful, like for its ability to reach a wider range of markets. There are certain musical characteristics influencing the popularity of Spotify's top hits
+
+This analysis has helped me understand that popularity isn’t driven by one musical characteristic alone. Instead, it emerges from a combination of accessible lyrical content, engagement, and overall production appeal. My prior thoughts and biases have been redirected to be based on this study. The explicit nature of a song impacts the markets in which it may be available, but does not directly correlate to a song's popularity. Thereby, both explicit and non-explicit music were evenly represented in Spotify's top hits. The number of artists on a song does not determine whether or not a song is a hit, however, affects the audience it may reach. With more artists on a song, a larger audience is reached, demonstating that collaborative music is typically more successful.
+
+Musical structure related to the duration and tempo, a foundation, of a hit. My investigation has revealed that while tempo and duration may have a wide range and vey throughout the Spotify top hits, there is a certain range most common among hits. Thereby, successful songs have a typical stucture, reflecting broad trends.
+
+Through this investigation, I discovered that the popularity of songs on Spotify cannot be explained by any single musical element. My results challenged my initial assumptions, revealing that certain characteristics does not directly determine popularity but instead shape how songs are perceived and where they can circulate.
+
+In conclusion song characteristics do not determine if a song is a hit but may influence popularity among Spotify’s top hits. Thereby, we an see trends among the hits that reflect broader trends in modern popular music that reveal a connection between musical choices/structure and success.
+
+A promising area for future research in this field is to explore how musical characteristics affect a song’s emotional appeal. This investigation focused primarily on commercial success rather than the emotional dimensions of music. It would be interesting to examine which specific characteristics elicit certain emotional responses in listeners. Understanding these relationships could reveal how music not only achieves popularity but also creates emotional resonance, deepening our understanding of why some songs connect more profoundly with audiences.
+
+## References {.underline}
+
+“Learning R.” CDSC R Workshop, nyu-cdsc.github.io/learningr/.
+
+“Maximizing Impact of Artists Collaborations on Spotify Recommender Algorithms [Case Study, 2024]: Music Tomorrow Blog.”, www.music-tomorrow.com/blog/case-study-maximizing-impact-of-artists-collaborations-on-spotify-recommender-algorithms.
+
+Oliveira, Gabriel P., et al. “MGD: Music Genre Dataset.” Zenodo, Zenodo, 28 May 2021, zenodo.org/records/4778563.
+
+Parris, Daniel. “The Rise of Explicit Music: A Statistical Analysis.” The Rise of Explicit Music: A Statistical Analysis., Stat Significant, 29 June 2023, www.statsignificant.com/p/the-rise-of-explicit-music-a-statistical.
+
+Qiu, Yixuan. “Showtext: Using Fonts More Easily in R Graphs.” Showtext: Using Fonts More Easily in R Graphs, 2 Mar. 2024, cran.rstudio.com/web/packages/showtext/vignettes/introduction.html.
+
+Rosenborg, Rutger Ansley, and Rufy Ghazi. “Why Music Data Analytics Tools Are an Artist’s Best Friend.” How Music Charts, How Music Charts, 31 Oct. 2023, hmc.chartmetric.com/music-data-analytics-artists/.
+
+“Inserting Picture/Table in R Markdown.” Stack Overflow, 31 Oct. 2016, stackoverflow.com/questions/25166624/insert-picture-table-in-r-markdown.
